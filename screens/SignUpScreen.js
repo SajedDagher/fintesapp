@@ -57,7 +57,7 @@ const SignUpScreen = ({ navigation }) => {
           secureTextEntry
           autoCapitalize="none"
         />
-        <Button title="Sign Up" onPress={handleSignUp} color="#007AFF" />
+        <Button title="Sign Up" onPress={handleSignUp} color="#FFF" />
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.link}>Already have an account? Login</Text>
         </TouchableOpacity>
@@ -69,7 +69,7 @@ const SignUpScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E0E0E0', // Background color
+    backgroundColor: '#2D2D2D', // Background color
   },
   scrollContainer: {
     flexGrow: 1,
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333', // Dark text for contrast
+    color: '#FFF', // Dark text for contrast
   },
   input: {
     width: '100%',
@@ -94,9 +94,8 @@ const styles = StyleSheet.create({
     borderColor: '#CCCCCC',
   },
   link: {
-    color: '#007AFF',
+    color: '#FFF',
     marginTop: 10,
-    textDecorationLine: 'underline',
   },
 });
 

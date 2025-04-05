@@ -44,7 +44,7 @@ const UserInfoScreen = ({ navigation, route }) => {
         <Picker.Item label="Female" value="Female" />
         <Picker.Item label="Other" value="Other" />
       </Picker>
-      <Button title="Next" onPress={handleNext} color="#007AFF" />
+      <Button title="Next" onPress={handleNext} color="#FF9E9E" />
     </View>
   );
 };
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#2D2D2D',
   },
   title: {
     fontSize: 24,

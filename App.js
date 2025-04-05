@@ -1,6 +1,8 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Platform, View } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import SplashScreen from './screens/SplashScreen';
 import Login from './screens/Login';
 import SignUpScreen from './screens/SignUpScreen';
@@ -13,6 +15,12 @@ import FoodDiaryScreen from './screens/FoodDiaryScreen';
 import WorkoutDiaryScreen from './screens/WorkoutDiaryScreen';
 import ProgressScreen from './screens/ProgressScreen';
 import PremiumScreen from './screens/PremiumScreen';
+import FoodSearchScreen from './screens/FoodSearchScreen';
+import FoodScreen from './screens/FoodScreen';
+import HealthPermissionsScreen from './screens/HealthPermissionsScreen';
+import WorkoutTypeScreen from './screens/WorkoutTypeScreen';
+import WorkoutLogScreen from './screens/WorkoutLogScreen';
+
 
 const Stack = createStackNavigator();
 
@@ -29,6 +37,7 @@ const App = () => {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
+          headerBackTitleVisible: false,
         }}
       >
         {/* Initial Screens */}
@@ -42,7 +51,7 @@ const App = () => {
         <Stack.Screen 
           name="Login" 
           component={Login} 
-          options={{ title: 'Sign In' }}
+          options={{ title: 'Sign In', headerLeft: () => null }}
         />
         <Stack.Screen 
           name="SignUp" 
@@ -72,22 +81,57 @@ const App = () => {
           options={{ title: 'Set Your Goal' }}
         />
         
+        {/* Health Permissions Screen */}
+        {Platform.OS !== 'web' && (
+          <Stack.Screen
+            name="HealthPermissions"
+            component={HealthPermissionsScreen}
+            options={{ 
+              title: 'Health Data Access',
+              headerLeft: () => null
+            }}
+          />
+        )}
+        
         {/* Main App Screens */}
         <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
           options={{ 
             headerShown: false,
-            gestureEnabled: false // Prevent swipe back to auth screens
+            gestureEnabled: false
           }}
         />
         
-        {/* New Feature Screens */}
+        {/* Food Navigation */}
         <Stack.Screen 
           name="FoodDiary" 
           component={FoodDiaryScreen} 
-          options={{ title: 'Food Diary' }}
+          options={({ navigation }) => ({ 
+            title: 'Food Diary',
+            headerRight: () => (
+              <Icon 
+                name="add-circle-outline" 
+                size={28} 
+                color="#007AFF" 
+                style={{ marginRight: 15 }}
+                onPress={() => navigation.navigate('FoodSearch')}
+              />
+            )
+          })} 
         />
+        <Stack.Screen 
+          name="FoodSearch" 
+          component={FoodSearchScreen} 
+          options={{ title: 'Search Food' }} 
+        />
+        <Stack.Screen 
+          name="Food" 
+          component={FoodScreen} 
+          options={{ title: 'Food Details' }} 
+        />
+        
+        {/* Other Screens */}
         <Stack.Screen 
           name="WorkoutDiary" 
           component={WorkoutDiaryScreen} 
@@ -103,6 +147,16 @@ const App = () => {
           component={PremiumScreen} 
           options={{ title: 'Go Premium' }}
         />
+         <Stack.Screen 
+    name="WorkoutType" 
+    component={WorkoutTypeScreen} 
+    options={{ title: 'Workout Type' }} 
+  />
+  <Stack.Screen 
+    name="WorkoutLog" 
+    component={WorkoutLogScreen} 
+    options={({ route }) => ({ title: `Log ${route.params.workoutType}` })} 
+  />
       </Stack.Navigator>
     </NavigationContainer>
   );

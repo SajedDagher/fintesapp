@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 const LifestyleScreen = ({ navigation, route }) => {
-  const { name, email, uid, age, gender, height, weight } = route.params; // Data passed from HeightWeightScreen
+  const { name, email, uid, age, gender, height, weight } = route.params;
   const [lifestyle, setLifestyle] = useState('');
 
   const lifestyles = [
@@ -14,13 +14,11 @@ const LifestyleScreen = ({ navigation, route }) => {
   ];
 
   const handleNext = () => {
-    // Validate inputs
     if (!lifestyle) {
       alert('Please select a lifestyle.');
       return;
     }
 
-    // Navigate to the next screen and pass data
     navigation.navigate('Goal', {
       name: name,
       email: email,
@@ -36,21 +34,28 @@ const LifestyleScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Lifestyle</Text>
+      
       {lifestyles.map((item, index) => (
         <TouchableOpacity
           key={index}
           style={[
             styles.card,
-            lifestyle === item && { backgroundColor: '#007AFF' },
+            lifestyle === item && styles.activeCard,
           ]}
           onPress={() => setLifestyle(item)}
         >
-          <Text style={[styles.cardText, lifestyle === item && { color: '#FFF' }]}>
+          <Text style={[
+            styles.cardText,
+            lifestyle === item && styles.activeCardText
+          ]}>
             {item}
           </Text>
         </TouchableOpacity>
       ))}
-      <Button title="Next" onPress={handleNext} color="#007AFF" />
+      
+      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+        <Text style={styles.nextButtonText}>Next</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -59,27 +64,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#1E1E1E',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 30,
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    padding: 15,
+    backgroundColor: '#2D2D2D',
+    padding: 18,
     borderRadius: 10,
     marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#444',
+  },
+  activeCard: {
+    backgroundColor: '#FF9E9E',
+    borderColor: '#FF9E9E',
   },
   cardText: {
     fontSize: 16,
-    color: '#000',
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  activeCardText: {
+    color: '#1E1E1E',
+    fontWeight: '600',
+  },
+  nextButton: {
+    backgroundColor: '#FF9E9E',
+    padding: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  nextButtonText: {
+    color: '#1E1E1E',
+    fontSize: 18,
+    fontWeight: '600',
   },
 });
 

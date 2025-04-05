@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Switch } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 
 const HeightWeightScreen = ({ navigation, route }) => {
-  const { name, email, uid, age, gender } = route.params; // Data passed from UserInfoScreen
+  const { name, email, uid, age, gender } = route.params;
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [isMetric, setIsMetric] = useState(true);
 
   const handleNext = () => {
-    // Validate inputs
     if (!height || !weight) {
       alert('Please fill out all fields.');
       return;
     }
 
-    // Navigate to the next screen and pass data
     navigation.navigate('Lifestyle', {
       name: name,
       email: email,
@@ -29,29 +27,45 @@ const HeightWeightScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Body Metrics</Text>
+      
+      {/* New toggle design */}
       <View style={styles.toggleContainer}>
-        <Text>Metric (kg/cm)</Text>
-        <Switch
-          value={isMetric}
-          onValueChange={(value) => setIsMetric(value)}
-        />
-        <Text>Imperial (lbs/ft)</Text>
+        <TouchableOpacity
+          style={[styles.toggleButton, isMetric && styles.activeToggle]}
+          onPress={() => setIsMetric(true)}
+        >
+          <Text style={[styles.toggleText, isMetric && styles.activeToggleText]}>Metric (kg/cm)</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[styles.toggleButton, !isMetric && styles.activeToggle]}
+          onPress={() => setIsMetric(false)}
+        >
+          <Text style={[styles.toggleText, !isMetric && styles.activeToggleText]}>Imperial (lbs/ft)</Text>
+        </TouchableOpacity>
       </View>
+      
       <TextInput
         style={styles.input}
-        placeholder={isMetric ? 'Height (cm)' : 'Height (ft)'}
+        placeholder={isMetric ? 'Height in cm' : 'Height in ft'}
         value={height}
         onChangeText={setHeight}
         keyboardType="numeric"
+        placeholderTextColor="#999"
       />
+      
       <TextInput
         style={styles.input}
-        placeholder={isMetric ? 'Weight (kg)' : 'Weight (lbs)'}
+        placeholder={isMetric ? 'Weight in kg' : 'Weight in lbs'}
         value={weight}
         onChangeText={setWeight}
         keyboardType="numeric"
+        placeholderTextColor="#999"
       />
-      <Button title="Next" onPress={handleNext} color="#007AFF" />
+      
+      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+        <Text style={styles.nextButtonText}>Next</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -60,29 +74,63 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#1E1E1E',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 30,
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#2D2D2D',
     padding: 15,
     borderRadius: 10,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginBottom: 20,
+    color: '#FFFFFF',
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#444',
   },
   toggleContainer: {
     flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 30,
+    backgroundColor: '#2D2D2D',
+    borderRadius: 10,
+    padding: 5,
+    borderWidth: 1,
+    borderColor: '#444',
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 20,
+  },
+  activeToggle: {
+    backgroundColor: '#FF9E9E',
+  },
+  toggleText: {
+    color: '#999',
+    fontWeight: '500',
+  },
+  activeToggleText: {
+    color: '#1E1E1E',
+    fontWeight: '600',
+  },
+  nextButton: {
+    backgroundColor: '#FF9E9E',
+    padding: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  nextButtonText: {
+    color: '#1E1E1E',
+    fontSize: 18,
+    fontWeight: '600',
   },
 });
 

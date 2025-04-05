@@ -1,9 +1,94 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { db, auth } from '../firebaseConfig';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore'; // Added onSnapshot
+import { initHealthKit, getTodaySteps, startStepTracking } from '../healthService';
 
 const HomeScreen = ({ route, navigation }) => {
   const { fitnessData = {}, name = '', userData = {} } = route.params || {};
+  const [dailyStats, setDailyStats] = useState({ calories: 0, steps: 0 });
+  const [lastUpdatedDate, setLastUpdatedDate] = useState('');
+
+  useEffect(() => {
+    const fetchDailyStats = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (!userId) return;
+
+        const today = new Date().toISOString().split('T')[0];
+        const dailyStatsRef = doc(db, 'dailyStats', `${userId}_${today}`);
+
+        // Create real-time listener
+        const unsubscribe = onSnapshot(dailyStatsRef, (docSnap) => {
+          if (docSnap.exists()) {
+            setDailyStats(docSnap.data());
+          } else {
+            setDailyStats({ calories: 0, steps: 0 });
+          }
+          setLastUpdatedDate(today);
+        });
+
+        return unsubscribe;
+      } catch (error) {
+        console.error('Error fetching daily stats:', error);
+      }
+    };
+
+    const unsubscribe = fetchDailyStats();
+    return () => unsubscribe();
+  }, []);
+
+
+  const updateStepsInFirebase = async (steps) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+
+      const today = new Date().toISOString().split('T')[0];
+      const dailyStatsRef = doc(db, 'dailyStats', `${userId}_${today}`);
+
+      await setDoc(dailyStatsRef, { steps }, { merge: true });
+      setDailyStats(prev => ({ ...prev, steps }));
+      setLastUpdatedDate(today);
+    } catch (error) {
+      console.error('Error updating steps:', error);
+    }
+  };
+
+  const fetchDailyStats = async () => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+
+      const today = new Date().toISOString().split('T')[0];
+      const dailyStatsRef = doc(db, 'dailyStats', `${userId}_${today}`);
+
+      const docSnap = await getDoc(dailyStatsRef);
+      if (docSnap.exists()) {
+        setDailyStats(docSnap.data());
+      } else {
+        setDailyStats({ calories: 0, steps: 0 });
+      }
+      setLastUpdatedDate(today);
+    } catch (error) {
+      console.error('Error fetching daily stats:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDailyStats();
+
+    // Check every minute if the date has changed (for midnight reset)
+    const interval = setInterval(() => {
+      const today = new Date().toISOString().split('T')[0];
+      if (today !== lastUpdatedDate) {
+        fetchDailyStats();
+      }
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [lastUpdatedDate]);
 
   const widgets = [
     {
@@ -51,15 +136,15 @@ const HomeScreen = ({ route, navigation }) => {
 
       <View style={[styles.widget, styles.calorieWidget]}>
         <Icon name="local-fire-department" size={24} color="#FF9E9E" />
-        <Text style={styles.widgetLabel}>Calorie Goal</Text>
-        <Text style={styles.calorieValue}>{fitnessData.calorieGoal || '0'} kcal</Text>
+        <Text style={styles.widgetLabel}>Calorie Intake</Text>
+        <Text style={styles.calorieValue}>{dailyStats.calories || 0} of {fitnessData.calorieGoal || '0'} kcal</Text>
       </View>
 
       <View style={styles.row}>
         <View style={[styles.widget, styles.smallWidget]}>
           <Icon name="directions-walk" size={20} color="#A0E7E5" />
           <Text style={styles.widgetLabel}>Steps</Text>
-          <Text style={styles.widgetValue}>{fitnessData.stepGoal || '0'}</Text>
+          <Text style={styles.widgetValue}>{dailyStats.steps || 0} of {fitnessData.stepGoal || '0'}</Text>
         </View>
 
         <View style={[styles.widget, styles.smallWidget]}>
@@ -150,6 +235,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginTop: 4,
     fontWeight: 'bold',
+    color: '#F0F0F0',
   },
   calorieValue: {
     fontSize: 28,
