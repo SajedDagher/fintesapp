@@ -10,8 +10,57 @@ const GoalScreen = ({ navigation, route }) => {
   const goals = ['Lose Weight', 'Maintain Weight', 'Gain Weight'];
 
   const calculateFitness = (age, gender, height, weight, activityLevel, goal) => {
-    // ... (keep your existing calculateFitness function exactly the same)
-  };
+     // 1. BMR Calculation (Mifflin-St Jeor)
+     let BMR = gender === "male"
+     ? 10 * weight + 6.25 * height - 5 * age + 5
+     : 10 * weight + 6.25 * height - 5 * age - 161;
+
+   // 2. Adjust for Activity Level (TDEE)
+   const activityFactors = {
+     Sedentary: 1.2,
+     'Lightly Active': 1.375,
+     'Moderately Active': 1.55,
+     'Very Active': 1.725,
+     'Super Active': 1.9
+   };
+   let TDEE = BMR * (activityFactors[activityLevel] || 1.2);
+
+   // 3. Adjust Calories Based on Goal
+   let calorieGoal = TDEE;
+   if (goal === "Lose Weight") calorieGoal -= 500;
+   if (goal === "Gain Weight") calorieGoal += 500;
+
+   // 4. Calculate Macros
+   const macroRatios = {
+     "Lose Weight": { protein: 0.40, carbs: 0.40, fats: 0.20 },
+     "Maintain Weight": { protein: 0.30, carbs: 0.50, fats: 0.20 },
+     "Gain Weight": { protein: 0.35, carbs: 0.45, fats: 0.20 }
+   };
+
+   let macros = macroRatios[goal];
+   let protein = Math.round((calorieGoal * macros.protein) / 4); // 4 kcal per gram
+   let carbs = Math.round((calorieGoal * macros.carbs) / 4);
+   let fats = Math.round((calorieGoal * macros.fats) / 9); // 9 kcal per gram
+
+   // 5. Set Step Goal
+   const stepGoals = {
+     Sedentary: 5000,
+     'Lightly Active': 7000,
+     'Moderately Active': 9000,
+     'Very Active': 11000,
+     'Super Active': 13000
+   };
+   let stepGoal = stepGoals[activityLevel] || 5000;
+   if (goal === "Lose Weight") stepGoal += 2000;
+
+   return {
+     calorieGoal: Math.round(calorieGoal),
+     protein,
+     carbs,
+     fats,
+     stepGoal
+   };
+ }
 
   const handleSubmit = async () => {
     if (!goal) {
