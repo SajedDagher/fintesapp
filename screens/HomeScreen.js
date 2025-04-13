@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { db, auth } from '../firebaseConfig';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore'; // Added onSnapshot
+import { doc, getDoc, onSnapshot } from 'firebase/firestore'; 
 import { initHealthKit, getTodaySteps, startStepTracking } from '../healthService';
 
 const HomeScreen = ({ route, navigation }) => {
@@ -78,8 +78,6 @@ const HomeScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     fetchDailyStats();
-
-    // Check every minute if the date has changed (for midnight reset)
     const interval = setInterval(() => {
       const today = new Date().toISOString().split('T')[0];
       if (today !== lastUpdatedDate) {

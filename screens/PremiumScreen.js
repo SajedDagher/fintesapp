@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { auth, db } from '../firebaseConfig';
+import { doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 
 const PremiumScreen = () => {
   const [selectedPlan, setSelectedPlan] = useState('annual');
-  
+
   const plans = [
     {
       id: 'monthly',
@@ -29,15 +31,62 @@ const PremiumScreen = () => {
     },
   ];
 
+  const onUpgradePress = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        Alert.alert('Error', 'You must be logged in to upgrade.');
+        return;
+      }
+
+      const now = new Date();
+      let premiumEnds;
+
+      if (selectedPlan === 'monthly') {
+        premiumEnds = new Date(now.setMonth(now.getMonth() + 1));
+      } else if (selectedPlan === '6month') {
+        premiumEnds = new Date(now.setMonth(now.getMonth() + 6));
+      } else if (selectedPlan === 'annual') {
+        premiumEnds = new Date(now.setFullYear(now.getFullYear() + 1));
+      }
+
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        // If user doc doesn't exist, create it
+        await setDoc(userRef, {
+          isPremium: true,
+          premiumPlan: selectedPlan,
+          premiumSince: new Date().toISOString(),
+          premiumEnds: premiumEnds.toISOString(),
+        });
+      } else {
+        // Update existing doc
+        await updateDoc(userRef, {
+          isPremium: true,
+          premiumPlan: selectedPlan,
+          premiumSince: new Date().toISOString(),
+          premiumEnds: premiumEnds.toISOString(),
+        });
+      }
+
+      Alert.alert('Success', '🎉 You are now a Premium member!');
+    } catch (error) {
+      console.error('Upgrade error:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <Text style={styles.title}>Go Premium</Text>
         <Text style={styles.subtitle}>No ads + Access to advanced features</Text>
-        
+
         <View style={styles.featuresContainer}>
           <Text style={styles.feature}>📸 AI Camera Meal Analysis</Text>
-          <Text style={styles.feature}>� Barcode Scanning</Text>
+          <Text style={styles.feature}>📦 Barcode Scanning</Text>
           <Text style={styles.feature}>📊 Advanced Nutrition Analytics</Text>
           <Text style={styles.feature}>🧠 Smart Meal Suggestions</Text>
         </View>
@@ -64,7 +113,7 @@ const PremiumScreen = () => {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.upgradeButton}>
+        <TouchableOpacity style={styles.upgradeButton} onPress={onUpgradePress}>
           <Text style={styles.upgradeButtonText}>UPGRADE NOW</Text>
         </TouchableOpacity>
 
@@ -81,19 +130,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#1A1A1A', // Dark background
-    paddingBottom: 40, // Extra padding for scroll
+    backgroundColor: '#1A1A1A',
+    paddingBottom: 40,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#FFFFFF', // White text
+    color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#A0A0A0', // Light gray
+    color: '#A0A0A0',
     textAlign: 'center',
     marginBottom: 30,
   },
@@ -102,29 +151,29 @@ const styles = StyleSheet.create({
   },
   feature: {
     fontSize: 16,
-    color: '#E0E0E0', // Off-white
+    color: '#E0E0E0',
     marginBottom: 12,
   },
   plansContainer: {
     marginBottom: 30,
   },
   planCard: {
-    backgroundColor: '#2A2A2A', // Dark card
+    backgroundColor: '#2A2A2A',
     borderRadius: 12,
     padding: 20,
     marginBottom: 15,
     borderWidth: 2,
-    borderColor: '#333333', // Dark border
+    borderColor: '#333333',
   },
   selectedPlanCard: {
-    borderColor: '#FF9E9E', // Accent color
-    backgroundColor: '#2D2D2D', // Dark accent background
+    borderColor: '#FF9E9E',
+    backgroundColor: '#2D2D2D',
   },
   bestValueBadge: {
     position: 'absolute',
     top: -10,
     right: 15,
-    backgroundColor: '#FF9E9E', // Accent color
+    backgroundColor: '#FF9E9E',
     color: 'white',
     paddingHorizontal: 10,
     paddingVertical: 3,
@@ -135,25 +184,25 @@ const styles = StyleSheet.create({
   planName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF', // White
+    color: '#FFFFFF',
   },
   planPrice: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FFFFFF', // White
+    color: '#FFFFFF',
     marginVertical: 5,
   },
   planPerMonth: {
     fontSize: 14,
-    color: '#A0A0A0', // Light gray
+    color: '#A0A0A0',
   },
   planSavings: {
     fontSize: 14,
-    color: '#FF9E9E', // Accent color
+    color: '#FF9E9E',
     marginTop: 5,
   },
   upgradeButton: {
-    backgroundColor: '#FF9E9E', // Accent color
+    backgroundColor: '#FF9E9E',
     padding: 18,
     borderRadius: 12,
     alignItems: 'center',
@@ -166,7 +215,7 @@ const styles = StyleSheet.create({
   },
   securityText: {
     textAlign: 'center',
-    color: '#A0A0A0', // Light gray
+    color: '#A0A0A0',
     fontSize: 14,
   },
 });

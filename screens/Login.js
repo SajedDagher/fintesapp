@@ -14,16 +14,14 @@ const Login = ({ navigation }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      
-      // Fetch user data from Firestore
+ 
       const q = query(collection(db, 'users'), where('uid', '==', user.uid));
       const querySnapshot = await getDocs(q);
       
       if (!querySnapshot.empty) {
-        // Get the first document (assuming each user has only one document)
+  
         const userData = querySnapshot.docs[0].data();
         
-        // Navigate to HomeScreen with the user's data
         navigation.navigate('HomeScreen', { 
           fitnessData: {
             calorieGoal: userData.calorieGoal,
@@ -36,7 +34,7 @@ const Login = ({ navigation }) => {
         });
       } else {
         alert('No user data found. Please complete your profile setup.');
-        navigation.navigate('SignUp'); // Or wherever you want to send them
+        navigation.navigate('SignUp'); 
       }
     } catch (error) {
       alert('Login failed. Please check your credentials.');

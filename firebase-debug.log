@@ -1,0 +1,31 @@
+[debug] [2025-04-13T09:07:55.875Z] ----------------------------------------------------------------------
+[debug] [2025-04-13T09:07:55.879Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Sajed\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions --debug
+[debug] [2025-04-13T09:07:55.880Z] CLI Version:   14.1.0
+[debug] [2025-04-13T09:07:55.880Z] Platform:      win32
+[debug] [2025-04-13T09:07:55.880Z] Node Version:  v20.9.0
+[debug] [2025-04-13T09:07:55.881Z] Time:          Sun Apr 13 2025 12:07:55 GMT+0300 (Eastern European Summer Time)
+[debug] [2025-04-13T09:07:55.881Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-04-13T09:07:56.322Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-04-13T09:07:56.325Z] > authorizing via signed-in user (sajeddagher05@gmail.com)
+[debug] [2025-04-13T09:07:56.326Z] [iam] checking project fitbuddy-97025 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-04-13T09:07:56.328Z] Checked if tokens are valid: true, expires at: 1744537120191
+[debug] [2025-04-13T09:07:56.329Z] Checked if tokens are valid: true, expires at: 1744537120191
+[debug] [2025-04-13T09:07:56.332Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/fitbuddy-97025:testIamPermissions [none]
+[debug] [2025-04-13T09:07:56.333Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/fitbuddy-97025:testIamPermissions x-goog-quota-user=projects/fitbuddy-97025
+[debug] [2025-04-13T09:07:56.334Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/fitbuddy-97025:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-04-13T09:07:57.225Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/fitbuddy-97025:testIamPermissions 200
+[debug] [2025-04-13T09:07:57.226Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/fitbuddy-97025:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-04-13T09:07:57.227Z] Checked if tokens are valid: true, expires at: 1744537120191
+[debug] [2025-04-13T09:07:57.228Z] Checked if tokens are valid: true, expires at: 1744537120191
+[debug] [2025-04-13T09:07:57.229Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/fitbuddy-97025/serviceAccounts/fitbuddy-97025@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-04-13T09:07:57.229Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/fitbuddy-97025/serviceAccounts/fitbuddy-97025@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-04-13T09:07:58.100Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/fitbuddy-97025/serviceAccounts/fitbuddy-97025@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-04-13T09:07:58.101Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/fitbuddy-97025/serviceAccounts/fitbuddy-97025@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'fitbuddy-97025'...
+[info] 
+[info] i  deploying functions 
+[info] Running command: npm --prefix "$RESOURCE_DIR" run lint
+[error] 
+[error] Error: functions predeploy error: Command terminated with non-zero exit code 1

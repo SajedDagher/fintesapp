@@ -1,4 +1,4 @@
-const API_KEY = 'lMK4uidUePxEle2PkcSPJwUbUjUISqnQcowwChae'; // Get from https://fdc.nal.usda.gov/api-key-signup.html
+const API_KEY = 'lMK4uidUePxEle2PkcSPJwUbUjUISqnQcowwChae'; 
 const BASE_URL = 'https://api.nal.usda.gov/fdc/v1';
 
 export const searchFoods = async (query) => {

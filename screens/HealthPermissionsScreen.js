@@ -13,7 +13,6 @@ const HealthPermissionsScreen = () => {
       if (authorized) {
         navigation.replace('HomeScreen');
       } else {
-        // Handle case where user denied permissions
         navigation.replace('HomeScreen');
       }
     } catch (error) {

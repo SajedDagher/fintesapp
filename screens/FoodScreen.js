@@ -55,10 +55,7 @@ const FoodScreen = ({ route, navigation }) => {
         createdAt: new Date()
       });
 
-      // Update calories
       await updateDailyCalories(parseFloat(calories));
-      
-      // Navigate back to FoodDiary then to Home
       navigation.navigate('FoodDiary');
     } catch (error) {
       Alert.alert('Error', 'Failed to add food item');

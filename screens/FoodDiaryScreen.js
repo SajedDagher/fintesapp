@@ -50,12 +50,10 @@ const FoodDiaryScreen = ({ navigation }) => {
       const today = new Date().toISOString().split('T')[0];
       const dailyStatsRef = doc(db, 'dailyStats', `${userId}_${today}`);
   
-      // Get current stats or initialize if doesn't exist
       const docSnap = await getDoc(dailyStatsRef);
       const currentData = docSnap.exists() ? docSnap.data() : { calories: 0, steps: 0 };
       const newCalories = (currentData.calories || 0) + caloriesChange;
   
-      // Make sure we don't go negative
       await setDoc(dailyStatsRef, { 
         ...currentData,
         calories: Math.max(0, newCalories) 
@@ -66,7 +64,6 @@ const FoodDiaryScreen = ({ navigation }) => {
     }
   };
   
-  // Modify your deleteFoodLog function to ensure it passes calories:
   const deleteFoodLog = async (foodId, mealType, calories) => {
     try {
       await deleteDoc(doc(db, 'foodLogs', foodId));
@@ -76,7 +73,6 @@ const FoodDiaryScreen = ({ navigation }) => {
         [mealType]: prev[mealType].filter(food => food.id !== foodId),
       }));
   
-      // Pass negative value to subtract calories
       await updateDailyCalories(-calories);
     } catch (error) {
       Alert.alert('Error', 'Failed to delete food log');

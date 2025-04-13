@@ -48,7 +48,7 @@ const ProgressScreen = ({ route }) => {
           historyDates.push(data.date);
         });
 
-        // Combine with initial weight if it exists
+        
         const allWeights = initialWeight 
           ? [parseFloat(initialWeight), ...historyWeights]
           : historyWeights;
@@ -76,9 +76,8 @@ const ProgressScreen = ({ route }) => {
     fetchWeightHistory();
   }, [initialWeight, height]);
 
-  // Format data for the chart
   const getChartData = () => {
-    // Ensure we always have at least one data point
+    
     const data = weightData.length > 0 ? weightData : initialWeight ? [parseFloat(initialWeight)] : [0];
     const labels = dates.length > 0 ? dates.map(date => date.split('-')[2]) : ['Today'];
     
@@ -109,7 +108,7 @@ const ProgressScreen = ({ route }) => {
         createdAt: new Date()
       });
 
-      // Update user's current weight
+      
       const userQuery = query(collection(db, 'users'), where('uid', '==', userId));
       const userSnapshot = await getDocs(userQuery);
       
