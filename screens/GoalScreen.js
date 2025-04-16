@@ -86,7 +86,9 @@ const GoalScreen = ({ navigation, route }) => {
         carbs: fitnessData.carbs,
         fats: fitnessData.fats,
         stepGoal: fitnessData.stepGoal,
+        isPremium: false,
         createdAt: new Date(),
+        
       });
 
       navigation.navigate('HomeScreen', { 

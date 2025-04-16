@@ -20,7 +20,7 @@ import FoodScreen from './screens/FoodScreen';
 import HealthPermissionsScreen from './screens/HealthPermissionsScreen';
 import WorkoutTypeScreen from './screens/WorkoutTypeScreen';
 import WorkoutLogScreen from './screens/WorkoutLogScreen';
-
+import PaymentScreen from './screens/PaymentScreen';
 
 const Stack = createStackNavigator();
 
@@ -157,6 +157,8 @@ const App = () => {
     component={WorkoutLogScreen} 
     options={({ route }) => ({ title: `Log ${route.params.workoutType}` })} 
   />
+  <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
