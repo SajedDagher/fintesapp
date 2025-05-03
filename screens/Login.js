@@ -32,7 +32,9 @@ const Login = ({ navigation }) => {
             fats: userData.fats,
             stepGoal: userData.stepGoal
           },
-          name: userData.name
+          name: userData.name,
+          isPremium: userData.isPremium || false,  // <-- Add this line
+          userData
         });
       } else {
         alert('No user data found. Please complete your profile setup.');

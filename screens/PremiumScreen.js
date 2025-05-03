@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig'; // <-- make sure your firestore is exported as 'db'
 
 const PremiumScreen = () => {
   const [selectedPlan, setSelectedPlan] = useState('annual');
+  const [isPremium, setIsPremium] = useState(false);
   const navigation = useNavigation();
-  const auth = getAuth(); // Initialize auth
+  const auth = getAuth();
   const currentUser = auth.currentUser;
 
   const plans = [
@@ -17,11 +18,23 @@ const PremiumScreen = () => {
     { id: 'annual', name: 'Annual', price: '$79.99', perMonth: '$6.66/month', savings: '33% savings + 1 bonus month', bestValue: true },
   ];
 
+  useEffect(() => {
+    const checkPremiumStatus = async () => {
+      if (currentUser) {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        if (userDoc.exists() && userDoc.data().isPremium) {
+          setIsPremium(true);
+        }
+      }
+    };
+    checkPremiumStatus();
+  }, [currentUser]);
+
   const handleUpgrade = (planId) => {
     if (currentUser) {
       navigation.navigate('PaymentScreen', { uid: currentUser.uid, planId });
     } else {
-      alert("User not authenticated.");
+      alert('Please log in to upgrade.');
     }
   };
 
@@ -29,13 +42,13 @@ const PremiumScreen = () => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <Text style={styles.title}>Go Premium</Text>
-        <Text style={styles.subtitle}>No ads + Access to advanced features</Text>
+        <Text style={styles.subtitle}>Unlock the full FitBuddy experience!</Text>
 
         <View style={styles.featuresContainer}>
-          <Text style={styles.feature}>📸 AI Camera Meal Analysis</Text>
-          <Text style={styles.feature}>� Barcode Scanning</Text>
-          <Text style={styles.feature}>📊 Advanced Nutrition Analytics</Text>
-          <Text style={styles.feature}>🧠 Smart Meal Suggestions</Text>
+          <Text style={styles.feature}>✅ Water Intake Tracker</Text>
+          <Text style={styles.feature}>✅ AI Recommended Meals</Text>
+          <Text style={styles.feature}>✅ Remaining Calories Calculation</Text>
+          <Text style={styles.feature}>✅ Workout Definitions & Explanations</Text>
         </View>
 
         <View style={styles.plansContainer}>
@@ -44,6 +57,7 @@ const PremiumScreen = () => {
               key={plan.id}
               style={[styles.planCard, selectedPlan === plan.id && styles.selectedPlanCard]}
               onPress={() => setSelectedPlan(plan.id)}
+              disabled={isPremium}
             >
               {plan.bestValue && <Text style={styles.bestValueBadge}>BEST VALUE</Text>}
               <Text style={styles.planName}>{plan.name}</Text>
@@ -54,9 +68,15 @@ const PremiumScreen = () => {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.upgradeButton} onPress={() => handleUpgrade(selectedPlan)}>
-          <Text style={styles.upgradeButtonText}>UPGRADE NOW</Text>
-        </TouchableOpacity>
+        {isPremium ? (
+          <View style={styles.premiumButton}>
+            <Text style={styles.premiumButtonText}>🎉 You're already Premium!</Text>
+          </View>
+        ) : (
+          <TouchableOpacity style={styles.upgradeButton} onPress={() => handleUpgrade(selectedPlan)}>
+            <Text style={styles.upgradeButtonText}>UPGRADE NOW</Text>
+          </TouchableOpacity>
+        )}
 
         <Text style={styles.securityText}>🔒 Secure payment • Cancel anytime</Text>
       </View>
@@ -108,6 +128,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   upgradeButtonText: { color: 'white', fontWeight: 'bold', fontSize: 18 },
+  premiumButton: {
+    backgroundColor: '#3A3A3A',
+    padding: 18,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  premiumButtonText: { color: '#A0A0A0', fontWeight: 'bold', fontSize: 18 },
   securityText: { textAlign: 'center', color: '#A0A0A0', fontSize: 14 },
 });
 

@@ -6,9 +6,10 @@ import { doc, getDoc, onSnapshot } from 'firebase/firestore'; // Added onSnapsho
 import { initHealthKit, getTodaySteps, startStepTracking } from '../healthService';
 
 const HomeScreen = ({ route, navigation }) => {
-  const { fitnessData = {}, name = '', userData = {} } = route.params || {};
   const [dailyStats, setDailyStats] = useState({ calories: 0, steps: 0 });
   const [lastUpdatedDate, setLastUpdatedDate] = useState('');
+  const { fitnessData = {}, name = '', userData = {}, isPremium = false } = route.params || {};
+
 
   useEffect(() => {
     const fetchDailyStats = async () => {
@@ -96,7 +97,8 @@ const HomeScreen = ({ route, navigation }) => {
       title: 'Food Diary',
       icon: 'restaurant',
       color: '#FF9E9E',
-      screen: 'FoodDiary'
+      screen: 'FoodDiary',
+      params: { isPremium }
     },
     {
       id: 2,

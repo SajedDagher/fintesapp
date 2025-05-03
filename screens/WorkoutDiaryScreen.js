@@ -2,22 +2,37 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { db, auth } from '../firebaseConfig';
-import { collection, query, where, getDocs, deleteDoc, doc, addDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, doc, getDoc } from 'firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
 
 const WORKOUT_TYPES = ['Cardio', 'Strength', 'Flexibility', 'HIIT'];
 
+const WORKOUT_DEFINITIONS = {
+  Cardio: 'Boosts heart health and burns calories.',
+  Strength: 'Builds muscle mass and strength.',
+  Flexibility: 'Improves range of motion and reduces injury risk.',
+  HIIT: 'High-intensity workouts for fat burning and endurance.'
+};
+
 const WorkoutDiaryScreen = ({ navigation }) => {
   const [workouts, setWorkouts] = useState([]);
   const [selectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [isPremium, setIsPremium] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
-      const fetchWorkouts = async () => {
+      const fetchData = async () => {
         try {
           const userId = auth.currentUser?.uid;
           if (!userId) return;
 
+          // Fetch premium status
+          const userDoc = await getDoc(doc(db, 'users', userId));
+          if (userDoc.exists()) {
+            setIsPremium(userDoc.data().isPremium || false);
+          }
+
+          // Fetch today's workouts
           const q = query(
             collection(db, 'workouts'),
             where('userId', '==', userId),
@@ -37,7 +52,7 @@ const WorkoutDiaryScreen = ({ navigation }) => {
         }
       };
 
-      fetchWorkouts();
+      fetchData();
     }, [selectedDate])
   );
 
@@ -50,7 +65,7 @@ const WorkoutDiaryScreen = ({ navigation }) => {
     }
   };
 
-  const addWorkout = async (workoutType) => {
+  const addWorkout = (workoutType) => {
     navigation.navigate('WorkoutLog', { workoutType });
   };
 
@@ -104,7 +119,14 @@ const WorkoutDiaryScreen = ({ navigation }) => {
               style={styles.workoutTypeCard}
               onPress={() => addWorkout(type)}
             >
-              <Text style={styles.workoutTypeText}>{type}</Text>
+              <View style={styles.workoutTypeTextContainer}>
+                <Text style={styles.workoutTypeText}>{type}</Text>
+                {isPremium && (
+                  <Text style={styles.definitionText}>
+                    {WORKOUT_DEFINITIONS[type]}
+                  </Text>
+                )}
+              </View>
               <Icon name="add-circle-outline" size={28} color="#007AFF" />
             </TouchableOpacity>
           ))}
@@ -129,12 +151,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
+    color: '#FFF',
   },
   addButton: {
     padding: 8,
   },
   emptyText: {
-    color: '#666',
+    color: '#AAA',
     textAlign: 'center',
     marginTop: 20,
     fontSize: 16,
@@ -172,9 +195,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  workoutTypeTextContainer: {
+    flexShrink: 1,
+  },
   workoutTypeText: {
     fontSize: 16,
     fontWeight: '500',
+    color: '#000',
+  },
+  definitionText: {
+    marginTop: 4,
+    fontSize: 13,
+    color: '#333',
+    fontStyle: 'italic',
   },
 });
 

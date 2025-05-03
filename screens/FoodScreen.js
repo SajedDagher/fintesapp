@@ -7,7 +7,7 @@ import { db, auth } from '../firebaseConfig';
 import { collection, addDoc, doc, setDoc, getDoc } from 'firebase/firestore';
 
 const FoodScreen = ({ route, navigation }) => {
-  const { food, mealType } = route.params;
+  const { food, mealType = 'Lunch' } = route.params;
   const [serving, setServing] = useState(100);
 
   const updateDailyCalories = async (calories) => {
@@ -55,11 +55,8 @@ const FoodScreen = ({ route, navigation }) => {
         createdAt: new Date()
       });
 
-      // Update calories
       await updateDailyCalories(parseFloat(calories));
-      
-      // Navigate back to FoodDiary then to Home
-      navigation.navigate('FoodDiary');
+      navigation.goBack();
     } catch (error) {
       Alert.alert('Error', 'Failed to add food item');
       console.error('Error adding food:', error);
@@ -103,7 +100,10 @@ const FoodScreen = ({ route, navigation }) => {
               style={styles.servingInput}
               keyboardType="numeric"
               value={String(serving)}
-              onChangeText={(value) => setServing(Number(value) || 0)}
+              onChangeText={(value) => {
+                const num = parseInt(value);
+                if (!isNaN(num) && num > 0) setServing(num);
+              }}
             />
           </View>
 
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   innerContainer: { flex: 1, padding: 20, justifyContent: 'center' },
   foodHeader: { marginBottom: 20 },
   foodName: { fontSize: 22, fontWeight: 'bold', color: '#FFF' },
-  foodDetails: { fontSize: 14, color: '#666', marginTop: 4 },
+  foodDetails: { fontSize: 14, color: '#AAA', marginTop: 4 },
   nutritionContainer: { backgroundColor: '#FFF', borderRadius: 10, padding: 16, marginBottom: 20 },
   nutritionRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   nutritionLabel: { fontSize: 16, color: '#555' },

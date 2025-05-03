@@ -21,7 +21,7 @@ import HealthPermissionsScreen from './screens/HealthPermissionsScreen';
 import WorkoutTypeScreen from './screens/WorkoutTypeScreen';
 import WorkoutLogScreen from './screens/WorkoutLogScreen';
 import PaymentScreen from './screens/PaymentScreen';
-
+import RecommendedMealScreen from './screens/RecommendedMealScreen';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -158,7 +158,8 @@ const App = () => {
     options={({ route }) => ({ title: `Log ${route.params.workoutType}` })} 
   />
   <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
-
+<Stack.Screen name="FoodScreen" component={FoodScreen} />
+<Stack.Screen name="RecommendedMeal" component={RecommendedMealScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
